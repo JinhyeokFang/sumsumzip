@@ -27,7 +27,7 @@ public class SecurityConfig {
                         httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
                 )
                 .logout(logoutConfigurer -> logoutConfigurer.logoutSuccessUrl("/"))
-                .addFilterBefore(new JwtFilter(jwtProvider), BasicAuthenticationFilter.class)
+                .addFilterBefore(new AccessTokenFilter(jwtProvider), BasicAuthenticationFilter.class)
                 .oauth2Login(loginConfigurer ->
                         loginConfigurer
                                 .userInfoEndpoint(

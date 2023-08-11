@@ -11,7 +11,6 @@ import org.springframework.web.server.ResponseStatusException;
 import uk.jinhy.sumsumzip.controller.cat.GetCatDTO;
 import uk.jinhy.sumsumzip.controller.cat.UploadCatImageDTO;
 import uk.jinhy.sumsumzip.service.*;
-import uk.jinhy.sumsumzip.util.JwtProvider;
 
 @RequiredArgsConstructor
 @RequestMapping("/cat")
@@ -22,7 +21,6 @@ public class CatController {
     private final CatService catService;
 
     private final Logger logger = LoggerFactory.getLogger(CatController.class);
-    private final JwtProvider jwtProvider;
 
     @PostMapping("/upload")
     public UploadCatImageDTO uploadCatImage(
@@ -34,7 +32,7 @@ public class CatController {
         if (authentication == null) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
-                    "Authorization Header가 없습니다."
+                    "토큰이 필요합니다."
             );
         }
         try {

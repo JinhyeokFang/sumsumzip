@@ -18,6 +18,8 @@ spring:
             client-id:
             client-secret:
             scope: profile, email
+    jwt:
+      secret:
 
 cloud:
   aws:

@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class S3Service {
 
     private final AmazonS3 amazonS3;

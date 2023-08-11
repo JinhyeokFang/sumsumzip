@@ -5,11 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.jinhy.sumsumzip.controller.user.TokenResponseDTO;
+import uk.jinhy.sumsumzip.service.UserService;
 
 @RequiredArgsConstructor
 @RestController
 public class UserController {
     private final HttpSession httpSession;
+    private final UserService userService;
 
     @GetMapping("/")
     public String index() {
@@ -18,7 +20,18 @@ public class UserController {
 
     @GetMapping("/token")
     public TokenResponseDTO token() {
-        var token = (String) httpSession.getAttribute("token");
-        return new TokenResponseDTO(token != null, token);
+        var refreshToken = (String) httpSession.getAttribute("refresh-token");
+        if (refreshToken == null) {
+            return new TokenResponseDTO(
+                    false,
+                    null
+            );
+        }
+        try {
+            var accessToken = userService.createAccessToken(refreshToken);
+            return new TokenResponseDTO(true, accessToken);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

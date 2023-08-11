@@ -2,9 +2,6 @@ package uk.jinhy.sumsumzip.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import uk.jinhy.sumsumzip.entity.Cat;
 import uk.jinhy.sumsumzip.repository.CatRepository;
