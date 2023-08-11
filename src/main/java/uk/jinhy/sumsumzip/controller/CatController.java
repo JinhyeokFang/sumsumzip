@@ -3,15 +3,18 @@ package uk.jinhy.sumsumzip.controller;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import uk.jinhy.sumsumzip.entity.Cat;
+import org.springframework.web.server.ResponseStatusException;
+import uk.jinhy.sumsumzip.controller.cat.GetCatDTO;
+import uk.jinhy.sumsumzip.controller.cat.UploadCatImageDTO;
 import uk.jinhy.sumsumzip.service.*;
-
-import java.io.IOException;
-import java.util.List;
+import uk.jinhy.sumsumzip.util.JwtProvider;
 
 @RequiredArgsConstructor
+@RequestMapping("/cat")
 @RestController
 public class CatController {
     private final S3Service s3Service;
@@ -19,31 +22,58 @@ public class CatController {
     private final CatService catService;
 
     private final Logger logger = LoggerFactory.getLogger(CatController.class);
+    private final JwtProvider jwtProvider;
 
     @PostMapping("/upload")
-    public String uploadCatImage(
-            @RequestPart(value = "image") MultipartFile imageFile
+    public UploadCatImageDTO uploadCatImage(
+            @RequestPart(value = "image") MultipartFile imageFile,
+            @RequestPart(value = "title") String title,
+            @RequestPart(value = "description") String description,
+            Authentication authentication
     ) {
+        if (authentication == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Authorization Header가 없습니다."
+            );
+        }
         try {
-            var userId = userService.getUserIdByEmail("jinhyeokfang@gmail.com");
+            var email = (String) authentication.getPrincipal();
+            logger.info(email);
+            var userId = userService.getUserIdByEmail(email);
             var imageURL = s3Service.saveFile(imageFile);
-            catService.addCat(imageURL, userId);
-            return imageURL;
+            catService.addCat(imageURL, userId, title, description);
+            return new UploadCatImageDTO(
+                    true,
+                    imageURL
+            );
         } catch (Exception error) {
             logger.error(error.getMessage());
-            return "error";
+            return new UploadCatImageDTO(
+                    false,
+                    ""
+            );
         }
     }
 
     @DeleteMapping("/{catId}")
-    public void removeCatImage(
-            @PathVariable Long catId
-    ) {
+    public void removeCatImage(@PathVariable Long catId) {
         catService.deleteCat(catId);
     }
 
     @GetMapping("/")
-    public List<Cat> getCats() {
-        return catService.getCats();
+    public GetCatDTO getCats() {
+        return new GetCatDTO(
+                catService.getCats()
+        );
+    }
+
+    @GetMapping("/user/{userId}")
+    public GetCatDTO getCatsByUserId(
+            @PathVariable Long userId
+    ) {
+        return new GetCatDTO(
+                catService.getCatsByUserId(userId)
+        );
     }
 }

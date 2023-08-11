@@ -2,23 +2,23 @@ package uk.jinhy.sumsumzip.controller;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import uk.jinhy.sumsumzip.service.SessionUser;
-import uk.jinhy.sumsumzip.service.UserAttribute;
+import org.springframework.web.bind.annotation.RestController;
+import uk.jinhy.sumsumzip.controller.user.TokenResponseDTO;
 
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class UserController {
     private final HttpSession httpSession;
 
     @GetMapping("/")
-    public String index(Model model, @UserAttribute SessionUser user) {
-        if(user != null) {
-            model.addAttribute("userName", user.getName());
-        }
+    public String index() {
         return "index";
+    }
+
+    @GetMapping("/token")
+    public TokenResponseDTO token() {
+        var token = (String) httpSession.getAttribute("token");
+        return new TokenResponseDTO(token != null, token);
     }
 }

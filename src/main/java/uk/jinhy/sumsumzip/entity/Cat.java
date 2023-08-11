@@ -23,12 +23,20 @@ public class Cat {
     @Column
     private Long userId;
 
+    @Column
+    private String title;
+
+    @Column
+    private String description;
+
     @CreatedDate
     private LocalDateTime createdDate;
 
     @Builder
-    public Cat(String url, Long userId) {
+    public Cat(String url, Long userId, String title, String description) {
         this.url = url;
         this.userId = userId;
+        this.title = title;
+        this.description = description;
     }
 }

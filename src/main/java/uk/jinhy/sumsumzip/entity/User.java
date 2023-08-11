@@ -23,13 +23,17 @@ public class User {
     @Column
     private String name;
 
+    @Column
+    private String picture;
+
     @CreatedDate
     private LocalDateTime createdDate;
 
     @Builder
-    public User(String email, String name) {
+    public User(String email, String name, String picture) {
         this.email = email;
         this.name = name;
+        this.picture = picture;
     }
 
     public User updateUser(String name) {

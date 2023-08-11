@@ -17,10 +17,12 @@ import java.util.Optional;
 @Transactional
 public class CatService {
     private final CatRepository catRepository;
-    public void addCat(String url, Long userId) {
+    public void addCat(String url, Long userId, String title, String description) {
         var cat = Cat.builder()
                 .url(url)
                 .userId(userId)
+                .title(title)
+                .description(description)
                 .build();
         catRepository.save(cat);
     }
@@ -36,8 +38,8 @@ public class CatService {
         return catRepository.findByIdBetween(start, end);
     }
     public List<Cat> getCats() {
-        Long start = getNumberOfLastCat();
-        Long end = start - 5;
+        Long end = getNumberOfLastCat();
+        Long start = end - 5 + 1;
 
         return getCats(start, end);
     }

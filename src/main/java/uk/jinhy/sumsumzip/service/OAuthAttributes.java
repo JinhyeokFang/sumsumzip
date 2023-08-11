@@ -13,11 +13,13 @@ public class OAuthAttributes {
     private final String nameAttributeKey;
     private final String name;
     private final String email;
+    private final String picture;
 
     public static OAuthAttributes of(String userNameAttributeName, Map<String, Object> attributes) {
         return OAuthAttributes.builder()
                 .name((String) attributes.get("name"))
                 .email((String) attributes.get("email"))
+                .picture((String) attributes.get("picture"))
                 .attributes(attributes)
                 .nameAttributeKey(userNameAttributeName)
                 .build();
@@ -27,6 +29,7 @@ public class OAuthAttributes {
         return User.builder()
                 .name(name)
                 .email(email)
+                .picture(picture)
                 .build();
     }
 }
