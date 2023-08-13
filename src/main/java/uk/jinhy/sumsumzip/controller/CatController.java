@@ -1,8 +1,7 @@
 package uk.jinhy.sumsumzip.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +11,7 @@ import uk.jinhy.sumsumzip.controller.cat.GetCatDTO;
 import uk.jinhy.sumsumzip.controller.cat.UploadCatImageDTO;
 import uk.jinhy.sumsumzip.service.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/cat")
 @RestController
@@ -19,8 +19,6 @@ public class CatController {
     private final S3Service s3Service;
     private final UserService userService;
     private final CatService catService;
-
-    private final Logger logger = LoggerFactory.getLogger(CatController.class);
 
     @PostMapping("/upload")
     public UploadCatImageDTO uploadCatImage(
@@ -37,7 +35,7 @@ public class CatController {
         }
         try {
             var email = (String) authentication.getPrincipal();
-            logger.info(email);
+            log.info(email);
             var userId = userService.getUserIdByEmail(email);
             var imageURL = s3Service.saveFile(imageFile);
             catService.addCat(imageURL, userId, title, description);
@@ -46,7 +44,7 @@ public class CatController {
                     imageURL
             );
         } catch (Exception error) {
-            logger.error(error.getMessage());
+            log.error(error.getMessage());
             return new UploadCatImageDTO(
                     false,
                     ""
@@ -59,10 +57,17 @@ public class CatController {
         catService.deleteCat(catId);
     }
 
-    @GetMapping("/")
-    public GetCatDTO getCats() {
+    @GetMapping("")
+    public GetCatDTO getCats(
+            @RequestParam(value = "pageNumber", required = false) Long pageNumber
+    ) {
+        if (pageNumber == null) {
+            return new GetCatDTO(
+                    catService.getCats()
+            );
+        }
         return new GetCatDTO(
-                catService.getCats()
+                catService.getCats(pageNumber)
         );
     }
 

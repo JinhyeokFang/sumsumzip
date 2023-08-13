@@ -2,6 +2,7 @@ package uk.jinhy.sumsumzip.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import uk.jinhy.sumsumzip.entity.User;
 import uk.jinhy.sumsumzip.repository.UserRepository;
 import uk.jinhy.sumsumzip.util.JwtProvider;
 import uk.jinhy.sumsumzip.util.JwtType;
@@ -34,5 +35,14 @@ public class UserService {
         }
 
         return user.get().getId();
+    }
+
+    public User getUserById(Long userId) throws Exception {
+        var user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new Exception("잘못된 아이디입니다.");
+        }
+
+        return user.get();
     }
 }

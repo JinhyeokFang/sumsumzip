@@ -3,8 +3,10 @@ package uk.jinhy.sumsumzip.controller;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import uk.jinhy.sumsumzip.controller.user.TokenResponseDTO;
+import uk.jinhy.sumsumzip.entity.User;
 import uk.jinhy.sumsumzip.service.UserService;
 
 @RequiredArgsConstructor
@@ -30,6 +32,17 @@ public class UserController {
         try {
             var accessToken = userService.createAccessToken(refreshToken);
             return new TokenResponseDTO(true, accessToken);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping("/user/{userId}")
+    public User getUserById(
+            @PathVariable Long userId
+    ) {
+        try {
+            return userService.getUserById(userId);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Table(name = "users")
 @Entity
@@ -25,9 +25,6 @@ public class User {
 
     @Column
     private String picture;
-
-    @CreatedDate
-    private LocalDateTime createdDate;
 
     @Builder
     public User(String email, String name, String picture) {
