@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "users")
@@ -14,7 +15,8 @@ import java.util.List;
 @Getter
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "userId")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long Id;
 
     @Column(unique = true)
@@ -25,6 +27,15 @@ public class User {
 
     @Column
     private String picture;
+
+    @OneToMany(targetEntity = CatLikes.class, mappedBy = "user")
+    private List<CatLikes> likeCats;
+
+    @OneToMany(targetEntity = UserFollows.class, mappedBy = "follower")
+    private List<User> following;
+
+    @OneToMany(targetEntity = UserFollows.class, mappedBy = "following")
+    private List<User> followers;
 
     @Builder
     public User(String email, String name, String picture) {

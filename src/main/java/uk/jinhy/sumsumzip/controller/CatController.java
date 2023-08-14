@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import uk.jinhy.sumsumzip.controller.cat.GetCatDTO;
+import uk.jinhy.sumsumzip.controller.cat.LikeRequestDTO;
 import uk.jinhy.sumsumzip.controller.cat.UploadCatImageDTO;
 import uk.jinhy.sumsumzip.service.*;
 
@@ -35,7 +36,6 @@ public class CatController {
         }
         try {
             var email = (String) authentication.getPrincipal();
-            log.info(email);
             var userId = userService.getUserIdByEmail(email);
             var imageURL = s3Service.saveFile(imageFile);
             catService.addCat(imageURL, userId, title, description);
@@ -78,5 +78,43 @@ public class CatController {
         return new GetCatDTO(
                 catService.getCatsByUserId(userId)
         );
+    }
+
+    @PutMapping("/like")
+    public void like(
+            LikeRequestDTO body,
+            Authentication authentication
+    ) {
+        if (authentication == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "토큰이 필요합니다."
+            );
+        }
+        var email = (String) authentication.getPrincipal();
+        try {
+            catService.like(email, body.getCatId());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PutMapping("/dislike")
+    public void dislike(
+            LikeRequestDTO body,
+            Authentication authentication
+    ) {
+        if (authentication == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "토큰이 필요합니다."
+            );
+        }
+        var email = (String) authentication.getPrincipal();
+        try {
+            catService.dislike(email, body.getCatId());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

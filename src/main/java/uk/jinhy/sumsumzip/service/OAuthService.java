@@ -1,6 +1,7 @@
 package uk.jinhy.sumsumzip.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -9,6 +10,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import uk.jinhy.sumsumzip.repository.UserRepository;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {

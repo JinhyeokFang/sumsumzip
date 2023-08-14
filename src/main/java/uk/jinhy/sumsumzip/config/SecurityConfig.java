@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.*;
 import org.springframework.security.web.SecurityFilterChain;
@@ -18,7 +17,6 @@ import uk.jinhy.sumsumzip.controller.OAuthSuccessHandler;
 import uk.jinhy.sumsumzip.util.JwtProvider;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,7 +41,7 @@ public class SecurityConfig {
                 .headers(httpSecurityHeadersConfigurer ->
                         httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
                 )
-                .logout(logoutConfigurer -> logoutConfigurer.logoutSuccessUrl("/"))
+                .logout(logoutConfigurer -> logoutConfigurer.logoutSuccessUrl(clientOrigin))
                 .addFilterBefore(new AccessTokenFilter(jwtProvider), BasicAuthenticationFilter.class)
                 .oauth2Login(loginConfigurer ->
                         loginConfigurer
@@ -51,7 +49,6 @@ public class SecurityConfig {
                                         userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuthService)
                                 )
                                 .successHandler(oAuthSuccessHandler)
-                                .defaultSuccessUrl(clientOrigin)
                 );
 
         return httpSecurity.build();
