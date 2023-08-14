@@ -4,9 +4,8 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "users")
@@ -31,9 +30,11 @@ public class User {
     @OneToMany(targetEntity = CatLikes.class, mappedBy = "user")
     private List<CatLikes> likeCats;
 
+    @JsonIgnore
     @OneToMany(targetEntity = UserFollows.class, mappedBy = "follower")
     private List<User> following;
 
+    @JsonIgnore
     @OneToMany(targetEntity = UserFollows.class, mappedBy = "following")
     private List<User> followers;
 

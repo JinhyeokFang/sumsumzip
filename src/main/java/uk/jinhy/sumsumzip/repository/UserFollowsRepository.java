@@ -1,7 +1,6 @@
 package uk.jinhy.sumsumzip.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import uk.jinhy.sumsumzip.entity.CatLikes;
 import uk.jinhy.sumsumzip.entity.User;
 import uk.jinhy.sumsumzip.entity.UserFollows;
 

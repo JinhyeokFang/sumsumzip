@@ -11,5 +11,5 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class GetCatDTO {
-    private List<Cat> cats;
+    private List<CatDTO> cats;
 }

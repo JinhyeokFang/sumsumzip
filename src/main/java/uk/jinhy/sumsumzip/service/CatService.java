@@ -47,9 +47,12 @@ public class CatService {
         return getCats(0l);
     }
 
-    public List<Cat> getCatsByUserId(Long userId) {
-        return catRepository.findByUserId(userId);
+    public List<Cat> getCatsByUserId(Long userId, Long pageNumber) {
+        var page = PageRequest.of(pageNumber.intValue(), 10, Sort.by(Sort.Direction.DESC, "id"));
+        return catRepository.findAllByUserId(page, userId).getContent();
     }
+
+    public List<Cat> getCatsByUserId(Long userId) { return getCatsByUserId(userId); }
 
     public void like(String userEmail, Long catId) {
         var user = userRepository.findByEmail(userEmail).get();

@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import uk.jinhy.sumsumzip.controller.cat.CatDTO;
 import uk.jinhy.sumsumzip.controller.cat.GetCatDTO;
 import uk.jinhy.sumsumzip.controller.cat.LikeRequestDTO;
 import uk.jinhy.sumsumzip.controller.cat.UploadCatImageDTO;
@@ -63,20 +64,26 @@ public class CatController {
     ) {
         if (pageNumber == null) {
             return new GetCatDTO(
-                    catService.getCats()
+                    catService.getCats().stream().map(CatDTO::new).toList()
             );
         }
         return new GetCatDTO(
-                catService.getCats(pageNumber)
+                catService.getCats(pageNumber).stream().map(CatDTO::new).toList()
         );
     }
 
     @GetMapping("/user/{userId}")
     public GetCatDTO getCatsByUserId(
-            @PathVariable Long userId
+            @PathVariable Long userId,
+            @RequestParam(value = "pageNumber", required = false) Long pageNumber
     ) {
+        if (pageNumber == null) {
+            return new GetCatDTO(
+                    catService.getCatsByUserId(userId, 0l).stream().map(CatDTO::new).toList()
+            );
+        }
         return new GetCatDTO(
-                catService.getCatsByUserId(userId)
+                catService.getCatsByUserId(userId, pageNumber).stream().map(CatDTO::new).toList()
         );
     }
 
