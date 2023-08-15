@@ -8,8 +8,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import uk.jinhy.sumsumzip.entity.Cat;
 import uk.jinhy.sumsumzip.entity.CatLikes;
+import uk.jinhy.sumsumzip.entity.Comment;
 import uk.jinhy.sumsumzip.repository.CatRepository;
 import uk.jinhy.sumsumzip.repository.CatLikesRepository;
+import uk.jinhy.sumsumzip.repository.CommentRepository;
 import uk.jinhy.sumsumzip.repository.UserRepository;
 
 import java.util.List;
@@ -22,6 +24,7 @@ public class CatService {
     private final UserRepository userRepository;
     private final CatRepository catRepository;
     private final CatLikesRepository catLikesRepository;
+    private final CommentRepository commentRepository;
 
     public void addCat(String url, Long userId, String title, String description) {
         var user = userRepository.findById(userId).get();
@@ -52,7 +55,7 @@ public class CatService {
         return catRepository.findAllByUserId(page, userId).getContent();
     }
 
-    public List<Cat> getCatsByUserId(Long userId) { return getCatsByUserId(userId); }
+    public List<Cat> getCatsByUserId(Long userId) { return getCatsByUserId(userId, 0l); }
 
     public void like(String userEmail, Long catId) {
         var user = userRepository.findByEmail(userEmail).get();
@@ -70,5 +73,29 @@ public class CatService {
         var user = userRepository.findByEmail(userEmail).get();
         var cat = catRepository.findById(catId).get();
         catLikesRepository.deleteAllByUserAndCat(user, cat);
+    }
+
+    public void addComment(String userEmail, Long catId, String content) {
+        var user = userRepository.findByEmail(userEmail).get();
+        var cat = catRepository.findById(catId).get();
+        var comment = Comment.builder()
+                .content(content)
+                .user(user)
+                .cat(cat)
+                .build();
+        commentRepository.save(comment);
+    }
+
+    public void editComment(Long commentId, String content) {
+        var comment = commentRepository.findById(commentId);
+        if (!comment.isEmpty()) {
+            var newComment = comment.get();
+            newComment.editContent(content);
+            commentRepository.save(newComment);
+        }
+    }
+
+    public void removeComment(Long commentId) {
+        commentRepository.deleteById(commentId);
     }
 }

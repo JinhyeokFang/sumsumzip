@@ -34,6 +34,9 @@ public class Cat {
     @OneToMany(targetEntity = CatLikes.class, mappedBy = "cat")
     private List<CatLikes> likeUsers;
 
+    @OneToMany(targetEntity = Comment.class, mappedBy = "cat")
+    private List<Comment> comments;
+
     @Builder
     public Cat(User user, String url, String title, String description) {
         this.url = url;

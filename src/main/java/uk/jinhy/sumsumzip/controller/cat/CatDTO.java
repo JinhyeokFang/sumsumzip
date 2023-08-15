@@ -22,6 +22,8 @@ public class CatDTO {
 
     private UserDTO user;
 
+    private List<CommentDTO> comments;
+
     public CatDTO(Cat cat) {
         this.id = cat.getId();
         this.url = cat.getUrl();
@@ -31,6 +33,6 @@ public class CatDTO {
                 like -> new UserDTO(like.getUser())
         ).toList();
         this.user = new UserDTO(cat.getUser());
+        this.comments = cat.getComments().stream().map(CommentDTO::new).toList();
     }
 }
-

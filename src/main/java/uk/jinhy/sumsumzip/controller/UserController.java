@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uk.jinhy.sumsumzip.controller.user.FollowRequestDTO;
 import uk.jinhy.sumsumzip.controller.user.TokenResponseDTO;
 import uk.jinhy.sumsumzip.controller.user.UserDTO;
+import uk.jinhy.sumsumzip.controller.user.UserWithFollowDataDTO;
 import uk.jinhy.sumsumzip.entity.User;
 import uk.jinhy.sumsumzip.service.UserService;
 
@@ -46,11 +47,11 @@ public class UserController {
     }
 
     @GetMapping("/user/{userId}")
-    public UserDTO getUserById(
+    public UserWithFollowDataDTO getUserById(
             @PathVariable Long userId
     ) {
         try {
-            return new UserDTO(
+            return new UserWithFollowDataDTO(
                     userService.getUserById(userId)
             );
         } catch (Exception e) {

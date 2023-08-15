@@ -3,7 +3,6 @@ package uk.jinhy.sumsumzip.controller.cat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import uk.jinhy.sumsumzip.entity.Cat;
 
 import java.util.List;
 

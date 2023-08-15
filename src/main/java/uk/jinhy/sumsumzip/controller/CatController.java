@@ -7,10 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import uk.jinhy.sumsumzip.controller.cat.CatDTO;
-import uk.jinhy.sumsumzip.controller.cat.GetCatDTO;
-import uk.jinhy.sumsumzip.controller.cat.LikeRequestDTO;
-import uk.jinhy.sumsumzip.controller.cat.UploadCatImageDTO;
+import uk.jinhy.sumsumzip.controller.cat.*;
 import uk.jinhy.sumsumzip.service.*;
 
 @Slf4j
@@ -79,7 +76,7 @@ public class CatController {
     ) {
         if (pageNumber == null) {
             return new GetCatDTO(
-                    catService.getCatsByUserId(userId, 0l).stream().map(CatDTO::new).toList()
+                    catService.getCatsByUserId(userId).stream().map(CatDTO::new).toList()
             );
         }
         return new GetCatDTO(
@@ -120,6 +117,43 @@ public class CatController {
         var email = (String) authentication.getPrincipal();
         try {
             catService.dislike(email, body.getCatId());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping("/comment")
+    public void addComment(
+            AddCommentRequestDTO body,
+            Authentication authentication
+    ) {
+        if (authentication == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "토큰이 필요합니다."
+            );
+        }
+        var email = (String) authentication.getPrincipal();
+        try {
+            catService.addComment(email, body.getCatId(), body.getContent());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @DeleteMapping("/comment/{commentId}")
+    public void deleteComment(
+            @PathVariable Long commentId,
+            Authentication authentication
+    ) {
+        if (authentication == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "토큰이 필요합니다."
+            );
+        }
+        try {
+            catService.removeComment(commentId);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

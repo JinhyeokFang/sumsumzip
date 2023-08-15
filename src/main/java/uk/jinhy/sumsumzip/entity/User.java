@@ -30,13 +30,11 @@ public class User {
     @OneToMany(targetEntity = CatLikes.class, mappedBy = "user")
     private List<CatLikes> likeCats;
 
-    @JsonIgnore
     @OneToMany(targetEntity = UserFollows.class, mappedBy = "follower")
-    private List<User> following;
+    private List<UserFollows> following;
 
-    @JsonIgnore
     @OneToMany(targetEntity = UserFollows.class, mappedBy = "following")
-    private List<User> followers;
+    private List<UserFollows> followers;
 
     @Builder
     public User(String email, String name, String picture) {
