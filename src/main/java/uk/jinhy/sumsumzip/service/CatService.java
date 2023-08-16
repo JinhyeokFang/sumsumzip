@@ -98,4 +98,8 @@ public class CatService {
     public void removeComment(Long commentId) {
         commentRepository.deleteById(commentId);
     }
+
+    public Cat getCatById(Long catId) {
+        return catRepository.findById(catId).get();
+    }
 }

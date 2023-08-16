@@ -84,6 +84,15 @@ public class CatController {
         );
     }
 
+    @GetMapping("/{catId}")
+    public CatDTO getCatById(
+            @PathVariable Long catId
+    ) {
+        return new CatDTO(
+                catService.getCatById(catId)
+        );
+    }
+
     @PutMapping("/like")
     public void like(
             LikeRequestDTO body,

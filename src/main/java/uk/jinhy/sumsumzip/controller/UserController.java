@@ -59,6 +59,26 @@ public class UserController {
         }
     }
 
+    @GetMapping("/user")
+    public UserWithFollowDataDTO getUserByToken(
+            Authentication authentication
+    ) {
+        if (authentication == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "토큰이 필요합니다."
+            );
+        }
+        var email = (String) authentication.getPrincipal();
+        try {
+            return new UserWithFollowDataDTO(
+                    userService.getUserByEmail(email)
+            );
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @PutMapping("/user/follow")
     public void follow(
             FollowRequestDTO body,

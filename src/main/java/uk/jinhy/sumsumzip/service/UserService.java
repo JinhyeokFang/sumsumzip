@@ -51,6 +51,15 @@ public class UserService {
         return user.get();
     }
 
+    public User getUserByEmail(String email) throws Exception {
+        var user = userRepository.findByEmail(email);
+        if (user.isEmpty()) {
+            throw new Exception("잘못된 이메일입니다.");
+        }
+
+        return user.get();
+    }
+
     public void follow(Long followerId, Long followingId) {
         var followUser = userRepository.findById(followerId).get();
         var followingUser = userRepository.findById(followingId).get();
