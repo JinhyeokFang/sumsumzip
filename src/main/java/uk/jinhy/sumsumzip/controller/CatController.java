@@ -93,6 +93,28 @@ public class CatController {
         );
     }
 
+
+
+    @GetMapping("/follows")
+    public GetCatDTO getCatsByFollowingList(
+            Authentication authentication
+    ) {
+        if (authentication == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "토큰이 필요합니다."
+            );
+        }
+        try {
+            var email = (String) authentication.getPrincipal();
+            return new GetCatDTO(
+                    catService.getCatsByFollowingList(email).stream().map(CatDTO::new).toList()
+            );
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @PutMapping("/like")
     public void like(
             LikeRequestDTO body,

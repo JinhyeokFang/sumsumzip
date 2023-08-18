@@ -18,13 +18,13 @@ public class UserWithFollowDataDTO extends UserDTO {
         this.followers = user
                 .getFollowers()
                 .stream()
-                .map(UserFollows::getFollowing)
+                .map(UserFollows::getFollower)
                 .map(UserDTO::new)
                 .toList();
         this.following =  user
                 .getFollowing()
                 .stream()
-                .map(UserFollows::getFollower)
+                .map(UserFollows::getFollowing)
                 .map(UserDTO::new)
                 .toList();
     }

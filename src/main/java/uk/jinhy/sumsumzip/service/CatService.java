@@ -6,9 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import uk.jinhy.sumsumzip.entity.Cat;
-import uk.jinhy.sumsumzip.entity.CatLikes;
-import uk.jinhy.sumsumzip.entity.Comment;
+import uk.jinhy.sumsumzip.entity.*;
 import uk.jinhy.sumsumzip.repository.CatRepository;
 import uk.jinhy.sumsumzip.repository.CatLikesRepository;
 import uk.jinhy.sumsumzip.repository.CommentRepository;
@@ -101,5 +99,17 @@ public class CatService {
 
     public Cat getCatById(Long catId) {
         return catRepository.findById(catId).get();
+    }
+
+    public List<Cat> getCatsByFollowingList(String email) {
+        var user = userRepository.findByEmail(email).get();
+        var followingList = user
+                .getFollowing()
+                .stream()
+                .map(UserFollows::getFollowing)
+                .map(User::getId)
+                .toList();
+
+        return catRepository.findByListOfUserId(PageRequest.of(0, 1000000000), followingList).getContent();
     }
 }
