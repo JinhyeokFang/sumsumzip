@@ -7,10 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import uk.jinhy.sumsumzip.entity.*;
-import uk.jinhy.sumsumzip.repository.CatRepository;
-import uk.jinhy.sumsumzip.repository.CatLikesRepository;
-import uk.jinhy.sumsumzip.repository.CommentRepository;
-import uk.jinhy.sumsumzip.repository.UserRepository;
+import uk.jinhy.sumsumzip.repository.*;
 
 import java.util.List;
 
@@ -111,5 +108,14 @@ public class CatService {
                 .toList();
 
         return catRepository.findByListOfUserId(PageRequest.of(0, 1000000000), followingList).getContent();
+    }
+
+    public List<Cat> getCatsByLikeList(String email) {
+        var user = userRepository.findByEmail(email).get();
+        return catLikesRepository
+                .findByUser(user)
+                .stream()
+                .map(CatLikes::getCat)
+                .toList();
     }
 }

@@ -5,9 +5,11 @@ import uk.jinhy.sumsumzip.entity.Cat;
 import uk.jinhy.sumsumzip.entity.CatLikes;
 import uk.jinhy.sumsumzip.entity.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CatLikesRepository extends JpaRepository<CatLikes, Long> {
     Optional<CatLikes> findByUserAndCat(User user, Cat cat);
-    Long deleteAllByUserAndCat(User user, Cat cat);
+    void deleteAllByUserAndCat(User user, Cat cat);
+    List<CatLikes> findByUser(User user);
 }
