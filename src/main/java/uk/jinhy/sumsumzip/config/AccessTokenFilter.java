@@ -39,7 +39,10 @@ public class AccessTokenFilter extends OncePerRequestFilter {
             if (claims.getSubject().equals(
                     JwtType.REFRESH_TOKEN.toString()
             )) {
-                throw new Exception("잘못된 토큰입니다.");
+                throw new ResponseStatusException(
+                        HttpStatus.FORBIDDEN,
+                        "잘못된 토큰입니다."
+                );
             }
 
             var email = claims.get("email");

@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.jinhy.sumsumzip.controller.user.FollowRequestDTO;
 import uk.jinhy.sumsumzip.controller.user.TokenResponseDTO;
-import uk.jinhy.sumsumzip.controller.user.UserDTO;
 import uk.jinhy.sumsumzip.controller.user.UserWithFollowDataDTO;
-import uk.jinhy.sumsumzip.entity.User;
 import uk.jinhy.sumsumzip.service.UserService;
 
 @Slf4j
@@ -24,23 +22,20 @@ public class UserController {
     private final HttpSession httpSession;
     private final UserService userService;
 
-    @GetMapping("/")
-    public String index() {
-        return "index";
-    }
-
     @GetMapping("/token")
     public TokenResponseDTO token() {
         var refreshToken = (String) httpSession.getAttribute("refresh-token");
         if (refreshToken == null) {
             return new TokenResponseDTO(
                     false,
+                    null,
                     null
             );
         }
         try {
             var accessToken = userService.createAccessToken(refreshToken);
-            return new TokenResponseDTO(true, accessToken);
+            var email = userService.getEmailByToken(refreshToken);
+            return new TokenResponseDTO(true, accessToken, email);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -117,5 +112,12 @@ public class UserController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("/user/{userId}/followers/count")
+    public Long getNumberOfFollowers(
+            @PathVariable("userId") Long userId
+    ) {
+        return userService.getNumberOfFollowers(userId);
     }
 }

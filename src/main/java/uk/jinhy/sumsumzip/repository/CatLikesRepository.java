@@ -12,4 +12,5 @@ public interface CatLikesRepository extends JpaRepository<CatLikes, Long> {
     Optional<CatLikes> findByUserAndCat(User user, Cat cat);
     void deleteAllByUserAndCat(User user, Cat cat);
     List<CatLikes> findByUser(User user);
+    Long deleteByCat(Cat cat);
 }

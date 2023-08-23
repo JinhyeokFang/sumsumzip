@@ -18,7 +18,12 @@ public class UserService {
     private final UserFollowsRepository userFollowsRepository;
     private final JwtProvider jwtProvider;
 
-    public String createAccessToken(String refreshToken) throws Exception{
+    public String getEmailByToken(String token) throws Exception {
+        var claims = jwtProvider.parseJwtToken(token);
+        return (String) claims.get("email");
+    }
+
+    public String createAccessToken(String refreshToken) throws Exception {
         var claims = jwtProvider.parseJwtToken(refreshToken);
         if (
                 !claims.getSubject().equals(
@@ -77,5 +82,9 @@ public class UserService {
         var followUser = userRepository.findById(followerId).get();
         var followingUser = userRepository.findById(followingId).get();
         userFollowsRepository.deleteAllByFollowerAndFollowing(followUser, followingUser);
+    }
+
+    public Long getNumberOfFollowers(Long userId) {
+        return userFollowsRepository.countUserFollowsByFollowing_Id(userId);
     }
 }

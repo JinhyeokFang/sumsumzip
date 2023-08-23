@@ -10,4 +10,5 @@ import lombok.Setter;
 public class TokenResponseDTO {
     private boolean isLogined;
     private String token;
+    private String email;
 }

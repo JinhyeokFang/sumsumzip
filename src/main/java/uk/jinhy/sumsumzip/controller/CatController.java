@@ -51,8 +51,23 @@ public class CatController {
     }
 
     @DeleteMapping("/{catId}")
-    public void removeCatImage(@PathVariable Long catId) {
-        catService.deleteCat(catId);
+    public void removeCatImage(
+            @PathVariable Long catId,
+            Authentication authentication
+    ) {
+        if (authentication == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "토큰이 필요합니다."
+            );
+        }
+        try {
+            var email = (String) authentication.getPrincipal();
+            var userId = userService.getUserIdByEmail(email);
+            catService.deleteCat(userId, catId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @GetMapping("")
@@ -95,7 +110,8 @@ public class CatController {
 
     @GetMapping("/follows")
     public GetCatDTO getCatsByFollowingList(
-            Authentication authentication
+            Authentication authentication,
+            @RequestParam(value = "pageNumber", required = false) Long pageNumber
     ) {
         if (authentication == null) {
             throw new ResponseStatusException(
@@ -105,8 +121,13 @@ public class CatController {
         }
         try {
             var email = (String) authentication.getPrincipal();
+            if (pageNumber == null) {
+                return new GetCatDTO(
+                        catService.getCatsByFollowingList(email, 0l).stream().map(CatDTO::new).toList()
+                );
+            }
             return new GetCatDTO(
-                    catService.getCatsByFollowingList(email).stream().map(CatDTO::new).toList()
+                    catService.getCatsByFollowingList(email, pageNumber).stream().map(CatDTO::new).toList()
             );
         } catch (Exception e) {
             throw new RuntimeException(e);

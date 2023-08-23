@@ -10,9 +10,11 @@ import uk.jinhy.sumsumzip.entity.Comment;
 public class CommentDTO {
     private String content;
     private UserDTO user;
+    private Long id;
 
     public CommentDTO(Comment comment) {
         this.content = comment.getContent();
         this.user = new UserDTO(comment.getUser());
+        this.id = comment.getId();
     }
 }

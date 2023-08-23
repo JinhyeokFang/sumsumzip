@@ -3,6 +3,7 @@ package uk.jinhy.sumsumzip.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -32,9 +33,14 @@ public class CatService {
         catRepository.save(cat);
     }
 
-    public void deleteCat(Long catId) {
-        var cat = catRepository.findById(catId);
-        cat.ifPresent(catRepository::delete);
+    public void deleteCat(Long userId, Long catId) throws Exception {
+        var cat = catRepository.findById(catId).get();
+        if (cat.getUser().getId() != userId) {
+            throw new Exception("삭제 권한이 없는 사용자입니다.");
+        }
+        catLikesRepository.deleteByCat(cat);
+        commentRepository.deleteByCat(cat);
+        catRepository.delete(cat);
     }
 
     public List<Cat> getCats(Long pageNumber) {
@@ -98,7 +104,7 @@ public class CatService {
         return catRepository.findById(catId).get();
     }
 
-    public List<Cat> getCatsByFollowingList(String email) {
+    public List<Cat> getCatsByFollowingList(String email, Long pageNumber) {
         var user = userRepository.findByEmail(email).get();
         var followingList = user
                 .getFollowing()
@@ -107,7 +113,7 @@ public class CatService {
                 .map(User::getId)
                 .toList();
 
-        return catRepository.findByListOfUserId(PageRequest.of(0, 1000000000), followingList).getContent();
+        return catRepository.findByListOfUserId(PageRequest.of(pageNumber.intValue(), 10), followingList).getContent();
     }
 
     public List<Cat> getCatsByLikeList(String email) {
