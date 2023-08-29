@@ -20,6 +20,9 @@ public class S3Service {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    @Value("${cloud.aws.cloudfront.url}")
+    private String cloudFront;
+
     public String saveFile(MultipartFile multipartFile) throws IOException {
         var filename = multipartFile.getOriginalFilename();
         var extension = filename.substring(filename.lastIndexOf(".") + 1);
@@ -35,6 +38,6 @@ public class S3Service {
                 multipartFile.getInputStream(),
                 metadata
         );
-        return amazonS3.getUrl(bucket, newFilename).toString();
+        return cloudFront + newFilename;
     }
 }
